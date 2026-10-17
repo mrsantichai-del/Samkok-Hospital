@@ -1,0 +1,305 @@
+// Prisma Schema สำหรับโปรแกรมการเบิกจ่ายเงินเดือนและค่าตอบแทน โรงพยาบาลสามโคก
+// อ้างอิงตามรูปที่ 3.7 (Class Diagram), รูปที่ 3.8 (ER Diagram) และรูปที่ 3.88 (Supabase + Prisma ORM)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ==========================================
+// Enumerations (ตามรูปที่ 3.7 Class Diagram)
+// ==========================================
+
+enum EmployeeStatus {
+  ACTIVE
+  RESIGNED
+  ON_LEAVE
+}
+
+enum PayrollStatus {
+  DRAFT
+  PENDING_APPROVAL
+  APPROVED
+  EDIT_REQUESTED
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  RETURNED
+}
+
+enum PayItemCategory {
+  INCOME
+  DEDUCTION
+}
+
+// ==========================================
+// 1. กลุ่มผู้ใช้งานและการควบคุมสิทธิ์ (RBAC & Security)
+// ==========================================
+
+model User {
+  id           String    @id @default(uuid())
+  employeeId   String?   @unique
+  username     String    @unique
+  passwordHash String
+  isActive     Boolean   @default(true)
+  remark       String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+
+  employee          Employee?         @relation(fields: [employeeId], references: [id])
+  userRoles         UserRole[]
+  auditLogs         AuditLog[]
+  updatedParameters SystemParameter[]
+  approvals         Approval[]
+}
+
+model Role {
+  id          String    @id @default(uuid())
+  name        String    @unique // e.g., "ADMIN", "FINANCE", "EXECUTIVE", "EMPLOYEE"
+  displayName String?   // ชื่อแสดงผลภาษาไทย เช่น "ผู้ดูแลระบบ", "เจ้าหน้าที่ฝ่ายการเงิน"
+  roleType    String?   @default("บทบาทภายใน")
+  description String?
+  isActive    Boolean   @default(true)
+  permissions Json?     // เก็บตารางสิทธิ์เมนูตามหน้าจอรูปที่ 3.72
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  userRoles UserRole[]
+}
+
+model UserRole {
+  id         String    @id @default(uuid())
+  userId     String
+  roleId     String
+  assignedAt DateTime  @default(now())
+  deletedAt  DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, roleId])
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  action    String   // LOGIN, CREATE, UPDATE, DELETE, IMPORT, CALCULATE, SUBMIT, APPROVE, RETURN, EXPORT
+  menuName  String?  // เมนู/ฟังก์ชัน เช่น "จัดการบัญชีผู้ใช้งาน", "นำเข้าข้อมูลจาก Excel"
+  tableName String
+  recordId  String
+  summary   String?  // รายละเอียดสำหรับแสดงในตารางหน้าจอรูปที่ 3.74
+  status    String   @default("สำเร็จ")
+  oldValue  Json?
+  newValue  Json?
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
+// ==========================================
+// 2. กลุ่มข้อมูลพื้นฐานและพารามิเตอร์ (System Parameters)
+// ==========================================
+
+model SystemParameter {
+  id            String   @id @default(uuid())
+  code          String   @unique
+  name          String
+  category      String   @default("GENERAL") // TAX, SOCIAL_SECURITY, FUND, PAYROLL, GENERAL
+  value         String
+  effectiveDate DateTime @default(now())
+  updatedById   String?
+  isActive      Boolean  @default(true)
+  remark        String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  updatedBy User? @relation(fields: [updatedById], references: [id], onDelete: SetNull)
+}
+
+// ==========================================
+// 3. กลุ่มโครงสร้างองค์กรและบุคลากร (Organization & Employees)
+// ==========================================
+
+model Department {
+  id           String    @id @default(uuid())
+  name         String    @unique
+  buildingName String?   // เชื่อมโยง 7 อาคารหลักตามแผนที่เดินดิน รูปที่ 3.1
+  description  String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+
+  positions Position[]
+  employees Employee[]
+}
+
+model Position {
+  id           String    @id @default(uuid())
+  name         String
+  departmentId String
+  description  String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+
+  department Department @relation(fields: [departmentId], references: [id])
+  employees  Employee[]
+}
+
+model EmployeeType {
+  id          String    @id @default(uuid())
+  name        String    @unique // ข้าราชการ, พนักงานราชการ, พนักงานกระทรวงสาธารณสุข, ลูกจ้างประจำ, ลูกจ้างชั่วคราว
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  employees Employee[]
+}
+
+model Employee {
+  id               String         @id @default(uuid())
+  employeeCode     String         @unique // เช่น E0001
+  titleName        String
+  firstName        String
+  lastName         String
+  citizenId        String         @unique // เลขประจำตัวประชาชน 13 หลัก (Modulo 11)
+  birthDate        DateTime?
+  gender           String?
+  phone            String?
+  email            String?
+  hireDate         DateTime
+  employmentStatus EmployeeStatus @default(ACTIVE)
+  baseSalary       Decimal        @db.Decimal(12, 2)
+  levelName        String?        // ระดับ เช่น ชำนาญการ, ปฏิบัติการ
+  departmentId     String
+  positionId       String
+  employeeTypeId   String
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  deletedAt        DateTime?
+
+  department     Department            @relation(fields: [departmentId], references: [id])
+  position       Position              @relation(fields: [positionId], references: [id])
+  employeeType   EmployeeType          @relation(fields: [employeeTypeId], references: [id])
+  user           User?
+  bankAccounts   EmployeeBankAccount[]
+  payrollRecords PayrollRecord[]
+}
+
+model EmployeeBankAccount {
+  id          String   @id @default(uuid())
+  employeeId  String
+  bankName    String   @default("กรุงไทย")
+  accountNo   String
+  accountName String
+  isPrimary   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+}
+
+// ==========================================
+// 4. กลุ่มการประมวลผลเงินเดือนและการอนุมัติ (Payroll & Approval)
+// ==========================================
+
+model PayrollPeriod {
+  id          String        @id @default(uuid())
+  month       Int
+  year        Int           // ปี พ.ศ. เช่น 2569 หรือ 2567
+  round       Int           @default(1)
+  cycleType   String        @default("รายเดือน")
+  startDate   DateTime
+  endDate     DateTime
+  payDate     DateTime?
+  status      PayrollStatus @default(DRAFT)
+  remark      String?
+  submittedBy String?
+  submittedAt DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  payrollRecords PayrollRecord[]
+  approvals      Approval[]
+
+  @@unique([month, year, round])
+}
+
+model PayrollRecord {
+  id             String   @id @default(uuid())
+  slipNo         String?  @unique // เช่น SLIP6709-000123
+  periodId       String
+  employeeId     String
+  baseSalary     Decimal  @db.Decimal(12, 2) // Snapshot เงินเดือนฐาน ณ งวดนั้น
+  grossPay       Decimal  @db.Decimal(12, 2)
+  totalDeduction Decimal  @db.Decimal(12, 2)
+  netPay         Decimal  @db.Decimal(12, 2)
+  isReviewed     Boolean  @default(true)
+  hasIssue       Boolean  @default(false)
+  issueRemark    String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  period       PayrollPeriod @relation(fields: [periodId], references: [id], onDelete: Cascade)
+  employee     Employee      @relation(fields: [employeeId], references: [id])
+  payrollItems PayrollItem[]
+
+  @@unique([periodId, employeeId])
+}
+
+model PayItemType {
+  id                    String          @id @default(uuid())
+  code                  String          @unique // เช่น IN001, IN002, DE001
+  name                  String
+  type                  PayItemCategory // INCOME หรือ DEDUCTION
+  subCategory           String          @default("เงินได้ประจำ") // เงินได้ประจำ, เงินได้อื่น, รายการหักตามกฎหมาย, รายการหักอื่น
+  calcMethod            String          @default("จำนวนเงินคงที่") // จำนวนเงินคงที่, ตามชั่วโมง/อัตรา, คำนวณตามอัตราร้อยละ
+  defaultFormula        String?
+  includeTax            Boolean         @default(true)
+  includeSocialSecurity Boolean         @default(false)
+  isActive              Boolean         @default(true)
+  remark                String?
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
+
+  payrollItems PayrollItem[]
+}
+
+model PayrollItem {
+  id              String   @id @default(uuid())
+  payrollRecordId String
+  payItemTypeId   String
+  amount          Decimal  @db.Decimal(12, 2)
+  formulaUsed     String?
+  remark          String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  payrollRecord PayrollRecord @relation(fields: [payrollRecordId], references: [id], onDelete: Cascade)
+  payItemType   PayItemType   @relation(fields: [payItemTypeId], references: [id])
+}
+
+model Approval {
+  id             String         @id @default(uuid())
+  periodId       String
+  approverUserId String?
+  status         ApprovalStatus @default(PENDING)
+  remark         String?
+  signatureHash  String?        // รหัสประทับลายมือชื่อดิจิทัล (Digital Signature)
+  approvedAt     DateTime?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  period       PayrollPeriod @relation(fields: [periodId], references: [id], onDelete: Cascade)
+  approverUser User?         @relation(fields: [approverUserId], references: [id], onDelete: SetNull)
+}
