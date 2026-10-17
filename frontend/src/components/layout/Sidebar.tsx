@@ -23,7 +23,9 @@ export const Sidebar: React.FC = () => {
   const pathname = usePathname();
   const router = useRouter();
   const { user, logout } = useAuth();
-  const role = user?.role || 'FINANCE';
+  const activeRoles: string[] =
+    user?.roles && user.roles.length > 0 ? user.roles : [user?.role || 'FINANCE'];
+  const hasRole = (targetRole: string) => activeRoles.includes(targetRole);
 
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({
     payroll: true,
@@ -56,12 +58,12 @@ export const Sidebar: React.FC = () => {
         </div>
       </div>
 
-      {/* รายการเมนูแยกตามสิทธิ์การใช้งาน RBAC ตรงตาม Use Case Diagram (รูปที่ 3.2 - 3.6) */}
+      {/* รายการเมนูแยกตามสิทธิ์การใช้งาน RBAC ตรงตาม Use Case Diagram (รูปที่ 3.2 - 3.6) และรองรับหลายบทบาท (UserRole M:N) */}
       <nav className="flex-1 overflow-y-auto px-3 py-3 space-y-1 text-xs">
         {/* =====================================================================
             กลุ่มที่ 1: ผู้ดูแลระบบ (ADMIN) -> UC-02 ถึง UC-05 (รูปที่ 3.3)
         ===================================================================== */}
-        {role === 'ADMIN' && (
+        {hasRole('ADMIN') && (
           <div>
             <button
               onClick={() => toggleMenu('settings')}
@@ -132,7 +134,7 @@ export const Sidebar: React.FC = () => {
         {/* =====================================================================
             กลุ่มที่ 2: เจ้าหน้าที่ฝ่ายการเงิน (FINANCE) -> UC-06 ถึง UC-16 (รูปที่ 3.4)
         ===================================================================== */}
-        {role === 'FINANCE' && (
+        {hasRole('FINANCE') && (
           <>
             {/* บุคลากร (UC-06) */}
             <Link
@@ -288,7 +290,7 @@ export const Sidebar: React.FC = () => {
         {/* =====================================================================
             กลุ่มที่ 3: ผู้บริหาร (EXECUTIVE) -> UC-17 ถึง UC-21 (รูปที่ 3.5)
         ===================================================================== */}
-        {role === 'EXECUTIVE' && (
+        {hasRole('EXECUTIVE') && (
           <>
             {/* อนุมัติงวดเงินเดือน (UC-17, UC-18) */}
             <Link
@@ -354,7 +356,7 @@ export const Sidebar: React.FC = () => {
         {/* =====================================================================
             กลุ่มที่ 4: บุคลากรทั่วไป (EMPLOYEE) -> UC-22 ถึง UC-24 (รูปที่ 3.6)
         ===================================================================== */}
-        {role === 'EMPLOYEE' && (
+        {hasRole('EMPLOYEE') && (
           <>
             <Link
               href="/payslips"
