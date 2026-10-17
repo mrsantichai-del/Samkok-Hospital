@@ -1,0 +1,47 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: samkok_payroll_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: SamkhokHosp2026
+      POSTGRES_DB: samkok_hospital
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: samkok_payroll_backend
+    restart: unless-stopped
+    ports:
+      - '3001:3001'
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:SamkhokHosp2026@postgres:5432/samkok_hospital}
+      DIRECT_URL: ${DIRECT_URL:-postgresql://postgres:SamkhokHosp2026@postgres:5432/samkok_hospital}
+      JWT_SECRET: ${JWT_SECRET:-samkok-hospital-payroll-secret-key-2026}
+      PORT: 3001
+    depends_on:
+      - postgres
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: samkok_payroll_frontend
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3001}
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:

@@ -1,0 +1,21 @@
+# Render Blueprint สำหรับติดตั้ง Backend API (NestJS) เชื่อมต่อกับ Supabase PostgreSQL
+# อ้างอิงตามหัวข้อ 3.11.2 และ 3.12.13 (รูปที่ 3.83 และ 3.97)
+services:
+  - type: web
+    name: Samkok-Hospital
+    runtime: node
+    rootDir: backend
+    plan: free
+    buildCommand: npm install && npx prisma generate && npm run build
+    startCommand: npm run start:prod
+    envVars:
+      - key: NODE_VERSION
+        value: 20.16.0
+      - key: PORT
+        value: 3001
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false
+      - key: DIRECT_URL
+        sync: false

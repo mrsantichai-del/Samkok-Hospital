@@ -1,0 +1,94 @@
+name: Samkok Hospital Payroll CI/CD Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  # ============================================================================
+  # Job 1: Backend CI (NestJS + TypeScript + Prisma ORM + Supabase Schema Check)
+  # ============================================================================
+  backend-ci:
+    name: Backend API Build & Prisma Check (NestJS)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install Backend Dependencies
+        run: npm ci
+
+      - name: Validate & Generate Prisma Client
+        env:
+          DATABASE_URL: 'postgresql://postgres:password@localhost:5432/samkok_payroll?schema=public'
+          DIRECT_URL: 'postgresql://postgres:password@localhost:5432/samkok_payroll?schema=public'
+        run: npx prisma generate
+
+      - name: Build NestJS Backend (TypeScript Compile Check)
+        run: npm run build
+
+  # ============================================================================
+  # Job 2: Frontend CI (Next.js App Router + TypeScript + Tailwind CSS + Shadcn UI)
+  # ============================================================================
+  frontend-ci:
+    name: Frontend Web Build & Type Check (Next.js)
+    runs-on: ubuntu-latest
+    needs: backend-ci
+    defaults:
+      run:
+        working-directory: ./frontend
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install Frontend Dependencies
+        run: npm ci
+
+      - name: Build Next.js Production Bundle
+        env:
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL || 'https://samkok-hospital.onrender.com' }}
+        run: npm run build
+
+  # ============================================================================
+  # Job 3: Cloud Deployment Trigger (Vercel Frontend + Render Backend + Supabase)
+  # อ้างอิงตามหัวข้อ 3.11.2 และ 3.12.13 (รูปที่ 3.83 และ 3.97)
+  # ============================================================================
+  deploy-cloud:
+    name: Deploy to Render (Backend) & Vercel (Frontend)
+    runs-on: ubuntu-latest
+    needs: [backend-ci, frontend-ci]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Trigger Render Backend Deploy Hook (Optional)
+        if: ${{ secrets.RENDER_DEPLOY_HOOK_URL != '' }}
+        run: curl -fsSL -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
+
+      - name: Deployment Summary
+        run: |
+          echo "✅ CI/CD Pipeline Passed Successfully!"
+          echo "- Database: Supabase PostgreSQL (spwtsuxwnrmcwmqihozf)"
+          echo "- Backend API: NestJS Ready for Render Deployment"
+          echo "- Frontend Web: Next.js Ready for Vercel Deployment"
