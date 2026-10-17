@@ -27,7 +27,13 @@ export default function LoginPage() {
       const res = await signIn(username, password);
       setUser(res.user, res.accessToken);
       toast.success(`เข้าสู่ระบบสำเร็จ ยินดีต้อนรับ ${res.user.fullName}`);
-      router.push('/dashboard');
+      const roleRoutes: Record<string, string> = {
+        ADMIN: '/settings/users',
+        FINANCE: '/employees',
+        EXECUTIVE: '/reports/executive-dashboard',
+        EMPLOYEE: '/my-payslips',
+      };
+      router.push(roleRoutes[res.user.role] || '/employees');
     } catch (error: any) {
       toast.error(error?.message || 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง');
     } finally {

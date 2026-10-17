@@ -42,7 +42,7 @@ const DEMO_USERS: Record<'ADMIN' | 'FINANCE' | 'EXECUTIVE' | 'EMPLOYEE', UserPro
   },
   EMPLOYEE: {
     id: 'user-5',
-    username: 'somchai',
+    username: 'panya',
     fullName: 'นางสาวกมลวรรณ ใจดี',
     role: 'EMPLOYEE',
     roleDisplay: 'บุคลากรทั่วไป',
@@ -52,8 +52,22 @@ const DEMO_USERS: Record<'ADMIN' | 'FINANCE' | 'EXECUTIVE' | 'EMPLOYEE', UserPro
   },
 };
 
+const getInitialUser = (): UserProfile => {
+  if (typeof window !== 'undefined') {
+    try {
+      const saved = localStorage.getItem('samkok_user');
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch {
+      // ignore parse errors
+    }
+  }
+  return DEMO_USERS.FINANCE;
+};
+
 export const useAuthStore = create<AuthState>((set) => ({
-  user: DEMO_USERS.FINANCE,
+  user: getInitialUser(),
   token: 'demo-jwt-token',
   setUser: (user, token = null) => {
     if (typeof window !== 'undefined') {

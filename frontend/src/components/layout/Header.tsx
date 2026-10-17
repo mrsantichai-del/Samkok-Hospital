@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Bell, Menu, Shield } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import toast from 'react-hot-toast';
@@ -19,7 +19,7 @@ const ROUTE_UC_MAP: Record<string, string> = {
   '/payroll/adjustments': 'UC-11, 12',
   '/payroll/results': 'UC-13, 14',
   '/payroll/returned': 'UC-15',
-  '/payslips': 'UC-16, 24',
+  '/payslips': 'UC-16, 22, 24',
   '/my-payslips': 'UC-22, 23',
   '/approvals': 'UC-17, 18',
   '/master/pay-items': 'UC-07',
@@ -31,8 +31,16 @@ const ROUTE_UC_MAP: Record<string, string> = {
   '/settings/audit-logs': 'UC-05',
 };
 
+const ROLE_DEFAULT_ROUTE: Record<'ADMIN' | 'FINANCE' | 'EXECUTIVE' | 'EMPLOYEE', string> = {
+  ADMIN: '/settings/users',
+  FINANCE: '/employees',
+  EXECUTIVE: '/reports/executive-dashboard',
+  EMPLOYEE: '/my-payslips',
+};
+
 export const Header: React.FC<HeaderProps> = ({ breadcrumbs = ['หน้าหลัก', 'ภาพรวมระบบ'] }) => {
   const pathname = usePathname();
+  const router = useRouter();
   const { user, switchRoleDemo } = useAuth();
   const ucTag = ROUTE_UC_MAP[pathname] || '';
 
@@ -46,12 +54,13 @@ export const Header: React.FC<HeaderProps> = ({ breadcrumbs = ['หน้าห�
   const handleRoleSwitch = (role: 'ADMIN' | 'FINANCE' | 'EXECUTIVE' | 'EMPLOYEE') => {
     switchRoleDemo(role);
     const names = {
-      ADMIN: 'ผู้ดูแลระบบ (System Admin)',
-      FINANCE: 'เจ้าหน้าที่ฝ่ายการเงิน (Finance Officer)',
-      EXECUTIVE: 'ผู้อำนวยการ / ผู้บริหาร (Executive)',
-      EMPLOYEE: 'บุคลากรทั่วไป (Hospital Employee)',
+      ADMIN: 'ผู้ดูแลระบบ (UC-02 ถึง UC-05)',
+      FINANCE: 'เจ้าหน้าที่ฝ่ายการเงิน (UC-06 ถึง UC-16)',
+      EXECUTIVE: 'ผู้อำนวยการ / ผู้บริหาร (UC-17 ถึง UC-21)',
+      EMPLOYEE: 'บุคลากรทั่วไป (UC-22 ถึง UC-24)',
     };
     toast.success(`สลับมุมมองบทบาทเป็น: ${names[role]}`);
+    router.push(ROLE_DEFAULT_ROUTE[role]);
   };
 
   return (
