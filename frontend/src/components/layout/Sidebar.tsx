@@ -56,7 +56,7 @@ export const Sidebar: React.FC = () => {
         <HospitalLogo className="h-10 w-10" />
         <div>
           <h1 className="text-sm font-bold text-white leading-tight">โรงพยาบาลสามโคก</h1>
-          <p className="text-[11px] text-slate-400">ระบบบริหารเงินเดือนและค่าตอบแทน</p>
+          <p className="text-[10px] text-slate-400 leading-tight mt-0.5">โปรแกรมบริหารจัดการเงินเดือนและค่าตอบแทน</p>
         </div>
       </div>
 

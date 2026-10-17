@@ -3,7 +3,7 @@ import { Toaster } from 'react-hot-toast';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'ระบบบริหารจัดการเงินเดือนและค่าตอบแทน | โรงพยาบาลสามโคก',
+  title: 'โปรแกรมบริหารจัดการเงินเดือนและค่าตอบแทน | โรงพยาบาลสามโคก',
   description:
     'โปรแกรมบริหารจัดการเงินเดือนและค่าตอบแทนบุคลากร โรงพยาบาลสามโคก จังหวัดปทุมธานี (Next.js + NestJS + Prisma + Supabase PostgreSQL)',
 };

@@ -52,7 +52,7 @@ export default function LoginPage() {
               <HospitalLogo className="h-14 w-14" />
               <div>
                 <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">โรงพยาบาลสามโคก</h1>
-                <p className="text-sm font-bold text-slate-800">ระบบเงินเดือนและค่าตอบแทน</p>
+                <p className="text-xs font-bold text-slate-800">โปรแกรมบริหารจัดการเงินเดือนและค่าตอบแทน</p>
               </div>
             </div>
 
@@ -113,7 +113,7 @@ export default function LoginPage() {
           <div>
             <h2 className="text-2xl font-bold text-slate-900">เข้าสู่ระบบ</h2>
             <p className="mt-1 text-xs text-slate-500">
-              กรุณาเข้าสู่ระบบเพื่อใช้งานระบบเงินเดือนและค่าตอบแทน
+              กรุณาเข้าสู่ระบบเพื่อใช้งานโปรแกรมบริหารจัดการเงินเดือนและค่าตอบแทน
             </p>
           </div>
 

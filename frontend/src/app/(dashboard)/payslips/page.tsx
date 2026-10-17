@@ -314,7 +314,7 @@ export default function PayslipsPage() {
                     <div>
                       <h3 className="text-base font-bold text-slate-900">โรงพยาบาลสามโคก</h3>
                       <p className="text-xs text-slate-600">อำเภอสามโคก จังหวัดปทุมธานี</p>
-                      <p className="text-xs text-slate-500">ระบบบริหารเงินเดือนและค่าตอบแทน</p>
+                      <p className="text-xs text-slate-500">โปรแกรมบริหารจัดการเงินเดือนและค่าตอบแทน</p>
                     </div>
                   </div>
                   <div className="text-right">
