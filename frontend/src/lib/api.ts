@@ -12,6 +12,12 @@ export const SUPABASE_LOGO_URL =
 
 export const FALLBACK_LOGO_URL = '/samkok-logo.jpg';
 
+export const SUPABASE_LOGIN_BG_URL =
+  process.env.NEXT_PUBLIC_LOGIN_BG_URL ||
+  'https://spwtsuxwnrmcwmqihozf.supabase.co/storage/v1/object/public/hospital-assets/login-hospital.jpg';
+
+export const FALLBACK_LOGIN_BG_URL = '/login-hospital.jpg';
+
 export async function apiFetch<T>(endpoint: string, options?: RequestInit, fallbackData?: T): Promise<T> {
   try {
     const token = typeof window !== 'undefined' ? localStorage.getItem('samkok_token') : null;

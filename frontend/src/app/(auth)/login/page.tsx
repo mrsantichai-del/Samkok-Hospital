@@ -2,8 +2,8 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Eye, EyeOff, Lock, User, ArrowRight, ShieldCheck, Users, CheckCircle2, Plus } from 'lucide-react';
-import { signIn } from '@/lib/api';
+import { Eye, EyeOff, Lock, User, ArrowRight, ShieldCheck, Users, CheckCircle2, FileCheck2 } from 'lucide-react';
+import { signIn, SUPABASE_LOGIN_BG_URL, FALLBACK_LOGIN_BG_URL } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,6 +18,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [bgSrc, setBgSrc] = useState<string>(SUPABASE_LOGIN_BG_URL);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,46 +44,66 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-100 via-blue-50/40 to-slate-200 p-4">
       <div className="grid w-full max-w-4xl grid-cols-1 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl md:grid-cols-2">
-        {/* ฝั่งซ้าย: ภาพและข้อมูลโรงพยาบาลสามโคก (ตรงตามรูปที่ 3.65 และ 3.89) */}
-        <div className="relative flex flex-col justify-between bg-gradient-to-b from-sky-100 via-blue-200 to-emerald-800 p-8 text-slate-900">
-          <div>
-            <div className="flex items-center gap-3">
-              <HospitalLogo className="h-12 w-12" />
+        {/* ฝั่งซ้าย: ภาพอาคารโรงพยาบาลสามโคกและสโลแกน (ตรงตามรูปที่ 3.65 และ 3.89 ทุกประการ ดึงภาพจาก Supabase Bucket) */}
+        <div className="relative flex flex-col justify-between bg-gradient-to-b from-[#cfe3f7] via-[#e2eefb] to-[#4b7c32] overflow-hidden text-slate-900">
+          {/* ส่วนหัวด้านบนพื้นหลังท้องฟ้า */}
+          <div className="relative z-10 px-8 pt-8 pb-3">
+            <div className="flex items-center gap-3.5">
+              <HospitalLogo className="h-14 w-14" />
               <div>
-                <h1 className="text-xl font-bold text-slate-900">โรงพยาบาลสามโคก</h1>
-                <p className="text-xs font-semibold text-slate-700">ระบบบริหารจัดการเงินเดือนและค่าตอบแทนบุคลากร</p>
+                <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">โรงพยาบาลสามโคก</h1>
+                <p className="text-sm font-bold text-slate-800">ระบบเงินเดือนและค่าตอบแทน</p>
               </div>
             </div>
 
-            <p className="mt-4 text-xs text-slate-700 leading-relaxed">
-              บริหารจัดการข้อมูลบุคลากรและเงินเดือนอย่างมีประสิทธิภาพ โปร่งใส และตรวจสอบได้
-              รองรับเงินเดือนฐาน ค่าตอบแทน พ.ต.ส. เบี้ยเลี้ยงเหมาจ่าย (ฉบับที่ 11) ค่าเวร/OT และสลิปอิเล็กทรอนิกส์
+            <p className="mt-4 text-sm font-medium text-slate-700 leading-relaxed">
+              บริหารจัดการข้อมูลบุคลากรและเงินเดือน
+              <br />
+              อย่างมีประสิทธิภาพ โปร่งใส และตรวจสอบได้
             </p>
           </div>
 
-          {/* จำลองภาพอาคารโรงพยาบาลสามโคกและการ์ดคุณสมบัติ */}
-          <div className="my-6 rounded-xl bg-white/85 p-4 backdrop-blur-sm shadow-md border border-white/60">
-            <div className="flex items-center gap-3">
-              <HospitalLogo className="h-12 w-12" />
-              <div>
-                <p className="text-xs font-bold text-slate-800">โรงพยาบาลสามโคก จังหวัดปทุมธานี</p>
-                <p className="text-[11px] text-slate-600">ครอบคลุม 7 อาคารหลัก | 5 ประเภทการจ้างงาน | 200+ บุคลากร</p>
-              </div>
-            </div>
-          </div>
+          {/* ภาพอาคารโรงพยาบาลสามโคก (ดึงจาก Supabase Storage Bucket: hospital-assets/login-hospital.jpg) */}
+          <div className="relative flex-1 flex flex-col justify-end min-h-[290px]">
+            <img
+              src={bgSrc}
+              alt="อาคารโรงพยาบาลสามโคก"
+              onError={() => {
+                if (bgSrc !== FALLBACK_LOGIN_BG_URL) {
+                  setBgSrc(FALLBACK_LOGIN_BG_URL);
+                }
+              }}
+              className="w-full h-full object-cover object-top select-none"
+            />
 
-          <div className="grid grid-cols-3 gap-2 rounded-xl bg-emerald-950/60 p-3 text-center text-white backdrop-blur-sm">
-            <div>
-              <Users className="mx-auto h-4 w-4 text-emerald-300" />
-              <p className="mt-1 text-[10px] font-medium">บริหารบุคลากรอย่างเป็นระบบ</p>
-            </div>
-            <div>
-              <ShieldCheck className="mx-auto h-4 w-4 text-emerald-300" />
-              <p className="mt-1 text-[10px] font-medium">ข้อมูลโปร่งใส ตรวจสอบได้</p>
-            </div>
-            <div>
-              <CheckCircle2 className="mx-auto h-4 w-4 text-emerald-300" />
-              <p className="mt-1 text-[10px] font-medium">ดูแลบุคลากร ดูแลอนาคต</p>
+            {/* แถบคุณสมบัติ 3 ช่องด้านล่างบนสนามหญ้า (ตรงตามรูปที่ 3.89) */}
+            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 via-black/35 to-transparent px-4 py-3.5 text-center text-white">
+              <div className="grid grid-cols-3 divide-x divide-white/30">
+                <div className="px-2">
+                  <Users className="mx-auto h-5 w-5 text-white" />
+                  <p className="mt-1 text-[11px] font-medium leading-tight">
+                    บริหารบุคลากร
+                    <br />
+                    อย่างเป็นระบบ
+                  </p>
+                </div>
+                <div className="px-2">
+                  <FileCheck2 className="mx-auto h-5 w-5 text-white" />
+                  <p className="mt-1 text-[11px] font-medium leading-tight">
+                    ข้อมูลโปร่งใส
+                    <br />
+                    ตรวจสอบได้
+                  </p>
+                </div>
+                <div className="px-2">
+                  <ShieldCheck className="mx-auto h-5 w-5 text-white" />
+                  <p className="mt-1 text-[11px] font-medium leading-tight">
+                    สนับสนุนการบริหาร
+                    <br />
+                    สุขภาพที่ยั่งยืน
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>

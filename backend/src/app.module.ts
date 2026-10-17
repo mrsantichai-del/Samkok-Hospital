@@ -47,7 +47,7 @@ export class AppController {
   async getLogoUrl() {
     try {
       const rows = await this.prisma.$queryRawUnsafe<Array<{ name: string }>>(
-        `SELECT name FROM storage.objects WHERE bucket_id = 'hospital-assets' ORDER BY created_at DESC LIMIT 1`,
+        `SELECT name FROM storage.objects WHERE bucket_id = 'hospital-assets' AND name NOT ILIKE '%login%' AND name NOT ILIKE '%hospital.jpg%' ORDER BY created_at DESC LIMIT 1`,
       );
       if (rows && rows.length > 0 && rows[0].name) {
         return {
