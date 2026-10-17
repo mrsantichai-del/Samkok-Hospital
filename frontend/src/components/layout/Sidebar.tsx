@@ -25,6 +25,7 @@ import {
   Plus,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { HospitalLogo } from '@/components/layout/HospitalLogo';
 
 export const Sidebar: React.FC = () => {
   const pathname = usePathname();
@@ -50,11 +51,9 @@ export const Sidebar: React.FC = () => {
 
   return (
     <aside className="flex h-screen w-64 flex-col bg-[#0f172a] text-slate-200 shadow-xl select-none shrink-0">
-      {/* ส่วนหัวตราสัญลักษณ์โรงพยาบาลสามโคก */}
+      {/* ส่วนหัวตราสัญลักษณ์โรงพยาบาลสามโคก (ดึงจาก Supabase Storage Bucket) */}
       <div className="flex items-center gap-3 border-b border-slate-800 px-4 py-4">
-        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 text-white shadow-md">
-          <Plus className="h-6 w-6 stroke-[3]" />
-        </div>
+        <HospitalLogo className="h-10 w-10" />
         <div>
           <h1 className="text-sm font-bold text-white leading-tight">โรงพยาบาลสามโคก</h1>
           <p className="text-[11px] text-slate-400">ระบบบริหารเงินเดือนและค่าตอบแทน</p>

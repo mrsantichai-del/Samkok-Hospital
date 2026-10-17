@@ -7,6 +7,7 @@ import { signIn } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { HospitalLogo } from '@/components/layout/HospitalLogo';
 import toast from 'react-hot-toast';
 
 export default function LoginPage() {
@@ -46,9 +47,7 @@ export default function LoginPage() {
         <div className="relative flex flex-col justify-between bg-gradient-to-b from-sky-100 via-blue-200 to-emerald-800 p-8 text-slate-900">
           <div>
             <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-600 text-white shadow-md">
-                <Plus className="h-7 w-7 stroke-[3]" />
-              </div>
+              <HospitalLogo className="h-12 w-12" />
               <div>
                 <h1 className="text-xl font-bold text-slate-900">โรงพยาบาลสามโคก</h1>
                 <p className="text-xs font-semibold text-slate-700">ระบบบริหารจัดการเงินเดือนและค่าตอบแทนบุคลากร</p>
@@ -64,9 +63,7 @@ export default function LoginPage() {
           {/* จำลองภาพอาคารโรงพยาบาลสามโคกและการ์ดคุณสมบัติ */}
           <div className="my-6 rounded-xl bg-white/85 p-4 backdrop-blur-sm shadow-md border border-white/60">
             <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-600/10 text-blue-700 font-bold text-lg">
-                🏥
-              </div>
+              <HospitalLogo className="h-12 w-12" />
               <div>
                 <p className="text-xs font-bold text-slate-800">โรงพยาบาลสามโคก จังหวัดปทุมธานี</p>
                 <p className="text-[11px] text-slate-600">ครอบคลุม 7 อาคารหลัก | 5 ประเภทการจ้างงาน | 200+ บุคลากร</p>

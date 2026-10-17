@@ -1,6 +1,7 @@
 import { Controller, Get, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './database/prisma.module';
+import { PrismaService } from './database/prisma.service';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { RolesModule } from './roles/roles.module';
@@ -16,12 +17,15 @@ import { ReportsModule } from './reports/reports.module';
 
 @Controller()
 export class AppController {
+  constructor(private readonly prisma: PrismaService) {}
+
   @Get()
   getRoot() {
     return {
       status: 'ok',
       service: 'Samkok Hospital Payroll Backend API (NestJS + Prisma + Supabase PostgreSQL)',
       hospital: 'โรงพยาบาลสามโคก จังหวัดปทุมธานี',
+      logoBucket: 'https://spwtsuxwnrmcwmqihozf.supabase.co/storage/v1/object/public/hospital-assets/samkok-logo.jpg',
       endpoints: [
         '/departments',
         '/employees',
@@ -29,6 +33,7 @@ export class AppController {
         '/payroll/periods',
         '/reports/summary',
         '/auth/login',
+        '/logo-url',
       ],
     };
   }
@@ -36,6 +41,29 @@ export class AppController {
   @Get('health')
   getHealth() {
     return { status: 'healthy', timestamp: new Date().toISOString() };
+  }
+
+  @Get('logo-url')
+  async getLogoUrl() {
+    try {
+      const rows = await this.prisma.$queryRawUnsafe<Array<{ name: string }>>(
+        `SELECT name FROM storage.objects WHERE bucket_id = 'hospital-assets' ORDER BY created_at DESC LIMIT 1`,
+      );
+      if (rows && rows.length > 0 && rows[0].name) {
+        return {
+          bucket: 'hospital-assets',
+          fileName: rows[0].name,
+          url: `https://spwtsuxwnrmcwmqihozf.supabase.co/storage/v1/object/public/hospital-assets/${encodeURIComponent(rows[0].name)}`,
+        };
+      }
+    } catch {
+      // Fallback if storage schema is not accessible
+    }
+    return {
+      bucket: 'hospital-assets',
+      fileName: 'samkok-logo.jpg',
+      url: 'https://spwtsuxwnrmcwmqihozf.supabase.co/storage/v1/object/public/hospital-assets/samkok-logo.jpg',
+    };
   }
 }
 

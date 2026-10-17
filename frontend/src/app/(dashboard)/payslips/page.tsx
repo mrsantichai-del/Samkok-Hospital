@@ -12,6 +12,7 @@ import {
   ZoomOut,
 } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
+import { HospitalLogo } from '@/components/layout/HospitalLogo';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -40,7 +41,11 @@ export default function PayslipsPage() {
   const netPay = 30300.0;
 
   const handleDownloadPdf = () => {
-    const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+    const apiBase =
+      process.env.NEXT_PUBLIC_API_URL ||
+      (typeof window !== 'undefined' && window.location.hostname !== 'localhost'
+        ? 'https://samkok-hospital.onrender.com'
+        : 'http://localhost:3001');
     window.open(`${apiBase}/me/payslip/period-2569-10/pdf?employeeCode=E0001`, '_blank');
     toast.success('กำลังสร้างและดาวน์โหลดไฟล์ PDF ขนาด A4 ด้วย PDFKit (payslip_E0001_2569_10.pdf)');
   };
@@ -302,12 +307,10 @@ export default function PayslipsPage() {
 
               {/* กระดาษ A4 สีขาว (TH Sarabun) */}
               <div className="mx-auto my-6 max-w-3xl rounded bg-white p-10 text-slate-900 shadow-lg">
-                {/* หัวกระดาษตราโรงพยาบาลสามโคก */}
+                {/* หัวกระดาษตราโรงพยาบาลสามโคก (ดึงจาก Supabase Storage Bucket) */}
                 <div className="flex items-start justify-between border-b-2 border-slate-300 pb-4">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-blue-600 bg-blue-50 text-blue-600">
-                      <Plus className="h-7 w-7 stroke-[3]" />
-                    </div>
+                    <HospitalLogo className="h-14 w-14" />
                     <div>
                       <h3 className="text-base font-bold text-slate-900">โรงพยาบาลสามโคก</h3>
                       <p className="text-xs text-slate-600">อำเภอสามโคก จังหวัดปทุมธานี</p>

@@ -1,5 +1,7 @@
 import { Injectable, ForbiddenException } from '@nestjs/common';
 import PDFDocument = require('pdfkit');
+import * as fs from 'fs';
+import * as path from 'path';
 import { PrismaService } from '../database/prisma.service';
 import { bahtText } from '../common/utils/bahttext.util';
 
@@ -156,8 +158,13 @@ export class PayslipService {
 
       // วาดส่วนหัวเอกสารตราสัญลักษณ์โรงพยาบาลสามโคก (รูปที่ 3.90)
       doc.rect(40, 40, 515, 70).stroke('#cbd5e1');
-      doc.circle(75, 75, 20).fillAndStroke('#2563eb', '#1d4ed8');
-      doc.fillColor('#ffffff').fontSize(18).text('+', 69, 65);
+      const logoPath = path.join(process.cwd(), 'assets', 'samkok-logo.jpg');
+      if (fs.existsSync(logoPath)) {
+        doc.image(logoPath, 52, 50, { width: 48, height: 48 });
+      } else {
+        doc.circle(75, 75, 20).fillAndStroke('#2563eb', '#1d4ed8');
+        doc.fillColor('#ffffff').fontSize(18).text('+', 69, 65);
+      }
 
       doc.fillColor('#0f172a').fontSize(15).text('Samkok Hospital (โรงพยาบาลสามโคก)', 110, 50);
       doc.fontSize(10).fillColor('#475569').text('Pathum Thani | Official Electronic Payslip (A4)', 110, 70);

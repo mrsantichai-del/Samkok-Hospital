@@ -6,6 +6,12 @@ const API_BASE_URL =
     ? 'https://samkok-hospital.onrender.com'
     : 'http://localhost:3001');
 
+export const SUPABASE_LOGO_URL =
+  process.env.NEXT_PUBLIC_HOSPITAL_LOGO_URL ||
+  'https://spwtsuxwnrmcwmqihozf.supabase.co/storage/v1/object/public/hospital-assets/samkok-logo.jpg';
+
+export const FALLBACK_LOGO_URL = '/samkok-logo.jpg';
+
 export async function apiFetch<T>(endpoint: string, options?: RequestInit, fallbackData?: T): Promise<T> {
   try {
     const token = typeof window !== 'undefined' ? localStorage.getItem('samkok_token') : null;
