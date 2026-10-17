@@ -1,7 +1,8 @@
 'use client';
 
-import React from 'react';
-import { Bell, Menu, Shield, UserCheck } from 'lucide-react';
+import React, { useEffect } from 'react';
+import { usePathname } from 'next/navigation';
+import { Bell, Menu, Shield } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import toast from 'react-hot-toast';
 
@@ -9,8 +10,38 @@ interface HeaderProps {
   breadcrumbs?: string[];
 }
 
+const ROUTE_UC_MAP: Record<string, string> = {
+  '/dashboard': 'UC-19',
+  '/employees': 'UC-06',
+  '/payroll/periods': 'UC-08',
+  '/payroll/import': 'UC-08',
+  '/payroll/calculate': 'UC-09, 10',
+  '/payroll/adjustments': 'UC-11, 12',
+  '/payroll/results': 'UC-13, 14',
+  '/payroll/returned': 'UC-15',
+  '/payslips': 'UC-16, 24',
+  '/my-payslips': 'UC-22, 23',
+  '/approvals': 'UC-17, 18',
+  '/master/pay-items': 'UC-07',
+  '/reports/executive-dashboard': 'UC-19',
+  '/reports/department-cost': 'UC-20, 21',
+  '/settings/users': 'UC-02',
+  '/settings/roles': 'UC-03',
+  '/settings/parameters': 'UC-04',
+  '/settings/audit-logs': 'UC-05',
+};
+
 export const Header: React.FC<HeaderProps> = ({ breadcrumbs = ['หน้าหลัก', 'ภาพรวมระบบ'] }) => {
+  const pathname = usePathname();
   const { user, switchRoleDemo } = useAuth();
+  const ucTag = ROUTE_UC_MAP[pathname] || '';
+
+  useEffect(() => {
+    const pageTitle = breadcrumbs[breadcrumbs.length - 1] || 'โรงพยาบาลสามโคก';
+    document.title = ucTag
+      ? `${pageTitle} (${ucTag}) | โรงพยาบาลสามโคก`
+      : `${pageTitle} | โรงพยาบาลสามโคก`;
+  }, [breadcrumbs, ucTag]);
 
   const handleRoleSwitch = (role: 'ADMIN' | 'FINANCE' | 'EXECUTIVE' | 'EMPLOYEE') => {
     switchRoleDemo(role);
@@ -31,11 +62,22 @@ export const Header: React.FC<HeaderProps> = ({ breadcrumbs = ['หน้าห�
           {breadcrumbs.map((bc, i) => (
             <React.Fragment key={i}>
               {i > 0 && <span className="text-slate-300">›</span>}
-              <span className={i === breadcrumbs.length - 1 ? 'font-semibold text-blue-700' : 'text-slate-500'}>
+              <span
+                title={ucTag ? `${bc} (${ucTag})` : bc}
+                className={i === breadcrumbs.length - 1 ? 'font-semibold text-blue-700' : 'text-slate-500'}
+              >
                 {bc}
               </span>
             </React.Fragment>
           ))}
+          {ucTag && (
+            <span
+              title={`รหัสฟังก์ชันระบบ: ${ucTag}`}
+              className="ml-1.5 rounded-md bg-blue-50 px-2 py-0.5 text-[11px] font-semibold text-blue-600 border border-blue-200"
+            >
+              {ucTag}
+            </span>
+          )}
         </div>
       </div>
 

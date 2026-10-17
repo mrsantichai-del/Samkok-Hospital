@@ -64,6 +64,7 @@ export const Sidebar: React.FC = () => {
       <nav className="flex-1 overflow-y-auto px-3 py-3 space-y-1 text-xs">
         <Link
           href="/dashboard"
+          title="หน้าแรก / แดชบอร์ดภาพรวมระบบ"
           className={`flex items-center gap-2.5 rounded-lg px-3 py-2.5 font-medium transition-colors ${
             pathname === '/dashboard'
               ? 'bg-blue-600 text-white shadow-sm'
@@ -77,6 +78,7 @@ export const Sidebar: React.FC = () => {
         {/* บุคลากร (UC-06) */}
         <Link
           href="/employees"
+          title="UC-06: การจัดการข้อมูลบุคลากร"
           className={`flex items-center gap-2.5 rounded-lg px-3 py-2.5 font-medium transition-colors ${
             isActive('/employees')
               ? 'bg-blue-600 text-white shadow-sm'
@@ -84,13 +86,14 @@ export const Sidebar: React.FC = () => {
           }`}
         >
           <Users className="h-4 w-4" />
-          <span>บุคลากร (UC-06)</span>
+          <span>บุคลากร</span>
         </Link>
 
         {/* งวดเงินเดือนและการประมวลผล (UC-08 ถึง UC-16) */}
         <div>
           <button
             onClick={() => toggleMenu('payroll')}
+            title="UC-08 ถึง UC-16, UC-22 ถึง UC-24"
             className="flex w-full items-center justify-between rounded-lg px-3 py-2.5 font-medium text-slate-300 hover:bg-slate-800/80 hover:text-white"
           >
             <div className="flex items-center gap-2.5">
@@ -104,83 +107,91 @@ export const Sidebar: React.FC = () => {
             <div className="mt-1 ml-3 space-y-1 border-l border-slate-700 pl-3">
               <Link
                 href="/payroll/periods"
+                title="UC-08: การสร้างและจัดการงวดเงินเดือน"
                 className={`block rounded-md px-2.5 py-2 transition-colors ${
                   isActive('/payroll/periods')
                     ? 'bg-blue-600 text-white font-semibold'
                     : 'text-slate-400 hover:bg-slate-800 hover:text-white'
                 }`}
               >
-                จัดการงวดเงินเดือน (UC-08)
+                จัดการงวดเงินเดือน
               </Link>
               <Link
                 href="/payroll/import"
+                title="UC-08: การนำเข้าข้อมูลเงินเดือนจากไฟล์ Excel"
                 className={`block rounded-md px-2.5 py-2 transition-colors ${
                   isActive('/payroll/import')
                     ? 'bg-blue-600 text-white font-semibold'
                     : 'text-slate-400 hover:bg-slate-800 hover:text-white'
                 }`}
               >
-                นำเข้าข้อมูลจาก Excel (UC-08)
+                นำเข้าข้อมูลจาก Excel
               </Link>
               <Link
                 href="/payroll/calculate"
+                title="UC-09, UC-10: การคำนวณเงินเดือนพื้นฐานและค่าล่วงเวลา (OT)"
                 className={`block rounded-md px-2.5 py-2 transition-colors ${
                   isActive('/payroll/calculate')
                     ? 'bg-blue-600 text-white font-semibold'
                     : 'text-slate-400 hover:bg-slate-800 hover:text-white'
                 }`}
               >
-                คำนวณเงินเดือน & OT (UC-09, 10)
+                คำนวณเงินเดือน & OT
               </Link>
               <Link
                 href="/payroll/adjustments"
+                title="UC-11, UC-12: การปรับปรุงรายการเงินได้และรายการหักรายบุคคล"
                 className={`block rounded-md px-2.5 py-2 transition-colors ${
                   isActive('/payroll/adjustments')
                     ? 'bg-blue-600 text-white font-semibold'
                     : 'text-slate-400 hover:bg-slate-800 hover:text-white'
                 }`}
               >
-                ปรับปรุงรายบุคคล (UC-11, 12)
+                ปรับปรุงรายบุคคล
               </Link>
               <Link
                 href="/payroll/results"
+                title="UC-13, UC-14: การตรวจสอบผลการประมวลผลและเสนออนุมัติงวดเงินเดือน"
                 className={`block rounded-md px-2.5 py-2 transition-colors ${
                   isActive('/payroll/results')
                     ? 'bg-blue-600 text-white font-semibold'
                     : 'text-slate-400 hover:bg-slate-800 hover:text-white'
                 }`}
               >
-                ผลการประมวลผลเงินเดือน (UC-13, 14)
+                ผลการประมวลผลเงินเดือน
               </Link>
               <Link
                 href="/payroll/returned"
+                title="UC-15: การตรวจสอบและแก้ไขงวดเงินเดือนที่ถูกส่งกลับ"
                 className={`block rounded-md px-2.5 py-2 transition-colors ${
                   isActive('/payroll/returned')
                     ? 'bg-blue-600 text-white font-semibold'
                     : 'text-slate-400 hover:bg-slate-800 hover:text-white'
                 }`}
               >
-                ตรวจสอบและแก้ไขงวดที่ส่งกลับ (UC-15)
+                ตรวจสอบและแก้ไขงวดที่ส่งกลับ
               </Link>
               <Link
                 href="/payslips"
+                title="UC-16, UC-24: ใบแสดงรายการเงินเดือนรายบุคคลและสร้างไฟล์ PDF"
                 className={`block rounded-md px-2.5 py-2 transition-colors ${
                   isActive('/payslips')
                     ? 'bg-blue-600 text-white font-semibold'
                     : 'text-slate-400 hover:bg-slate-800 hover:text-white'
                 }`}
               >
-                ใบแสดงรายการเงินเดือน PDF (UC-16, 24)
+                ใบแสดงรายการเงินเดือน PDF
               </Link>
               <Link
                 href="/my-payslips"
+                title="UC-22, UC-23: การตรวจสอบใบแสดงรายการเงินเดือนและประวัติย้อนหลัง"
                 className={`block rounded-md px-2.5 py-2 transition-colors ${
                   isActive('/my-payslips')
                     ? 'bg-blue-600 text-white font-semibold'
                     : 'text-slate-400 hover:bg-slate-800 hover:text-white'
                 }`}
               >
-                ประวัติเงินเดือนย้อนหลัง (UC-22, 23)
+                ประวัติเงินเดือนย้อนหลัง
               </Link>
             </div>
           )}
@@ -189,6 +200,7 @@ export const Sidebar: React.FC = () => {
         {/* อนุมัติงวดเงินเดือน (UC-17, UC-18) */}
         <Link
           href="/approvals"
+          title="UC-17, UC-18: การพิจารณาอนุมัติหรือส่งกลับงวดเงินเดือน"
           className={`flex items-center gap-2.5 rounded-lg px-3 py-2.5 font-medium transition-colors ${
             isActive('/approvals')
               ? 'bg-blue-600 text-white shadow-sm'
@@ -196,13 +208,14 @@ export const Sidebar: React.FC = () => {
           }`}
         >
           <CheckSquare className="h-4 w-4 text-emerald-400" />
-          <span>อนุมัติงวดเงินเดือน (UC-17, 18)</span>
+          <span>อนุมัติงวดเงินเดือน</span>
         </Link>
 
         {/* ข้อมูลพื้นฐาน (UC-07) */}
         <div>
           <button
             onClick={() => toggleMenu('master')}
+            title="UC-07: การจัดการข้อมูลพื้นฐาน"
             className="flex w-full items-center justify-between rounded-lg px-3 py-2.5 font-medium text-slate-300 hover:bg-slate-800/80 hover:text-white"
           >
             <div className="flex items-center gap-2.5">
@@ -215,13 +228,14 @@ export const Sidebar: React.FC = () => {
             <div className="mt-1 ml-3 space-y-1 border-l border-slate-700 pl-3">
               <Link
                 href="/master/pay-items"
+                title="UC-07: การจัดการประเภทเงินได้และรายการหัก"
                 className={`block rounded-md px-2.5 py-2 transition-colors ${
                   isActive('/master/pay-items')
                     ? 'bg-blue-600 text-white font-semibold'
                     : 'text-slate-400 hover:bg-slate-800 hover:text-white'
                 }`}
               >
-                ประเภทเงินได้และรายการหัก (UC-07)
+                ประเภทเงินได้และรายการหัก
               </Link>
             </div>
           )}
@@ -231,6 +245,7 @@ export const Sidebar: React.FC = () => {
         <div>
           <button
             onClick={() => toggleMenu('reports')}
+            title="UC-19, UC-20, UC-21: ระบบรายงานสำหรับผู้บริหาร"
             className="flex w-full items-center justify-between rounded-lg px-3 py-2.5 font-medium text-slate-300 hover:bg-slate-800/80 hover:text-white"
           >
             <div className="flex items-center gap-2.5">
@@ -243,23 +258,25 @@ export const Sidebar: React.FC = () => {
             <div className="mt-1 ml-3 space-y-1 border-l border-slate-700 pl-3">
               <Link
                 href="/reports/executive-dashboard"
+                title="UC-19: รายงานสรุปและแดชบอร์ดสำหรับผู้บริหาร"
                 className={`block rounded-md px-2.5 py-2 transition-colors ${
                   isActive('/reports/executive-dashboard')
                     ? 'bg-blue-600 text-white font-semibold'
                     : 'text-slate-400 hover:bg-slate-800 hover:text-white'
                 }`}
               >
-                รายงานสรุปและแดชบอร์ดผู้บริหาร (UC-19)
+                รายงานสรุปและแดชบอร์ดผู้บริหาร
               </Link>
               <Link
                 href="/reports/department-cost"
+                title="UC-20, UC-21: รายงานสรุปค่าใช้จ่ายตามหน่วยงานและการส่งออกไฟล์"
                 className={`block rounded-md px-2.5 py-2 transition-colors ${
                   isActive('/reports/department-cost')
                     ? 'bg-blue-600 text-white font-semibold'
                     : 'text-slate-400 hover:bg-slate-800 hover:text-white'
                 }`}
               >
-                รายงานสรุปค่าใช้จ่ายตามหน่วยงาน (UC-20, 21)
+                รายงานสรุปค่าใช้จ่ายตามหน่วยงาน
               </Link>
             </div>
           )}
@@ -269,11 +286,12 @@ export const Sidebar: React.FC = () => {
         <div>
           <button
             onClick={() => toggleMenu('settings')}
+            title="Admin (UC-02 ถึง UC-05): การตั้งค่าระบบสำหรับผู้ดูแลระบบ"
             className="flex w-full items-center justify-between rounded-lg px-3 py-2.5 font-medium text-slate-300 hover:bg-slate-800/80 hover:text-white"
           >
             <div className="flex items-center gap-2.5">
               <Settings className="h-4 w-4 text-purple-400" />
-              <span>ตั้งค่าระบบ (Admin)</span>
+              <span>ตั้งค่าระบบ</span>
             </div>
             {openMenus.settings ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
           </button>
@@ -281,43 +299,47 @@ export const Sidebar: React.FC = () => {
             <div className="mt-1 ml-3 space-y-1 border-l border-slate-700 pl-3">
               <Link
                 href="/settings/users"
+                title="UC-02: การจัดการบัญชีผู้ใช้งาน"
                 className={`block rounded-md px-2.5 py-2 transition-colors ${
                   isActive('/settings/users')
                     ? 'bg-blue-600 text-white font-semibold'
                     : 'text-slate-400 hover:bg-slate-800 hover:text-white'
                 }`}
               >
-                จัดการบัญชีผู้ใช้งาน (UC-02)
+                จัดการบัญชีผู้ใช้งาน
               </Link>
               <Link
                 href="/settings/roles"
+                title="UC-03: การกำหนดบทบาทและสิทธิ์การใช้งาน"
                 className={`block rounded-md px-2.5 py-2 transition-colors ${
                   isActive('/settings/roles')
                     ? 'bg-blue-600 text-white font-semibold'
                     : 'text-slate-400 hover:bg-slate-800 hover:text-white'
                 }`}
               >
-                กำหนดบทบาทการใช้งาน (UC-03)
+                กำหนดบทบาทการใช้งาน
               </Link>
               <Link
                 href="/settings/parameters"
+                title="UC-04: การจัดการค่าพื้นฐานและพารามิเตอร์ระบบ"
                 className={`block rounded-md px-2.5 py-2 transition-colors ${
                   isActive('/settings/parameters')
                     ? 'bg-blue-600 text-white font-semibold'
                     : 'text-slate-400 hover:bg-slate-800 hover:text-white'
                 }`}
               >
-                ค่าพื้นฐานและพารามิเตอร์ (UC-04)
+                ค่าพื้นฐานและพารามิเตอร์
               </Link>
               <Link
                 href="/settings/audit-logs"
+                title="UC-05: การตรวจสอบบันทึกการใช้งานและการเปลี่ยนแปลงข้อมูล (Audit Log)"
                 className={`block rounded-md px-2.5 py-2 transition-colors ${
                   isActive('/settings/audit-logs')
                     ? 'bg-blue-600 text-white font-semibold'
                     : 'text-slate-400 hover:bg-slate-800 hover:text-white'
                 }`}
               >
-                บันทึกการใช้งาน Audit Log (UC-05)
+                บันทึกการใช้งาน Audit Log
               </Link>
             </div>
           )}

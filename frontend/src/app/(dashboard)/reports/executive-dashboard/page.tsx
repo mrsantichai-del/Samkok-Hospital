@@ -286,7 +286,7 @@ export default function ExecutiveDashboardPage() {
         <div className="grid grid-cols-1 gap-5 lg:grid-cols-5">
           <Card className="lg:col-span-3">
             <CardContent className="p-5">
-              <h3 className="mb-3 text-sm font-bold text-slate-800">แนวโน้มค่าใช้จ่ายรายเดือน (Recharts)</h3>
+              <h3 title="Recharts" className="mb-3 text-sm font-bold text-slate-800">แนวโน้มค่าใช้จ่ายรายเดือน</h3>
               <div className="h-64 w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={MONTHLY_TREND_DATA}>
