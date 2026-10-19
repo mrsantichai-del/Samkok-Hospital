@@ -1,5 +1,6 @@
 import { Controller, Get, Post, Put, Body, Query, Req } from '@nestjs/common';
 import { PayrollService } from './payroll.service';
+import { SavePeriodDto, SavePayrollAdjustmentDto } from './dto/payroll.dto';
 
 @Controller('payroll')
 export class PayrollController {
@@ -11,12 +12,12 @@ export class PayrollController {
   }
 
   @Post('periods')
-  async createPeriod(@Body() dto: any, @Req() req: any) {
+  async createPeriod(@Body() dto: SavePeriodDto, @Req() req: any) {
     return this.payrollService.savePeriod(dto, req.user?.userId);
   }
 
   @Put('periods')
-  async updatePeriod(@Body() dto: any, @Req() req: any) {
+  async updatePeriod(@Body() dto: SavePeriodDto, @Req() req: any) {
     return this.payrollService.savePeriod(dto, req.user?.userId);
   }
 
@@ -31,12 +32,12 @@ export class PayrollController {
   }
 
   @Post('income-item')
-  async saveIncomeItem(@Body() dto: any) {
+  async saveIncomeItem(@Body() dto: SavePayrollAdjustmentDto) {
     return this.payrollService.savePayrollAdjustment(dto);
   }
 
   @Post('deduction-item')
-  async saveDeductionItem(@Body() dto: any) {
+  async saveDeductionItem(@Body() dto: SavePayrollAdjustmentDto) {
     return this.payrollService.savePayrollAdjustment(dto);
   }
 

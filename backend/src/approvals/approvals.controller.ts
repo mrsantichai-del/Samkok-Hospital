@@ -1,5 +1,6 @@
 import { Controller, Get, Post, Param, Body, Req } from '@nestjs/common';
 import { ApprovalService } from './approvals.service';
+import { ApprovalDecisionDto } from './dto/approval-decision.dto';
 
 @Controller('approvals')
 export class ApprovalController {
@@ -12,7 +13,7 @@ export class ApprovalController {
 
   @Post('decision')
   async decide(
-    @Body() dto: { periodId: string; decision: 'APPROVE' | 'RETURN'; remark?: string },
+    @Body() dto: ApprovalDecisionDto,
     @Req() req: any,
   ) {
     return this.approvalService.decide(dto, req.user?.userId);

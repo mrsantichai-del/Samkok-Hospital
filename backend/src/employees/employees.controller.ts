@@ -1,5 +1,6 @@
 import { Controller, Get, Post, Put, Body, Query, Req } from '@nestjs/common';
 import { EmployeeService } from './employees.service';
+import { SaveEmployeeDto } from './dto/save-employee.dto';
 
 @Controller('employees')
 export class EmployeeController {
@@ -16,12 +17,12 @@ export class EmployeeController {
   }
 
   @Post()
-  async createEmployee(@Body() dto: any, @Req() req: any) {
+  async createEmployee(@Body() dto: SaveEmployeeDto, @Req() req: any) {
     return this.employeeService.saveEmployee(dto, req.user?.userId);
   }
 
   @Put()
-  async updateEmployee(@Body() dto: any, @Req() req: any) {
+  async updateEmployee(@Body() dto: SaveEmployeeDto, @Req() req: any) {
     return this.employeeService.saveEmployee(dto, req.user?.userId);
   }
 }

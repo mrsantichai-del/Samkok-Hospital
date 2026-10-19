@@ -1,5 +1,6 @@
 import { Controller, Get, Post, Put, Body, Query, Req } from '@nestjs/common';
 import { PayItemService } from './pay-items.service';
+import { SavePayItemDto } from './dto/save-pay-item.dto';
 
 @Controller('pay-items')
 export class PayItemController {
@@ -11,12 +12,12 @@ export class PayItemController {
   }
 
   @Post()
-  async create(@Body() dto: any, @Req() req: any) {
+  async create(@Body() dto: SavePayItemDto, @Req() req: any) {
     return this.payItemService.savePayItemType(dto, req.user?.userId);
   }
 
   @Put()
-  async update(@Body() dto: any, @Req() req: any) {
+  async update(@Body() dto: SavePayItemDto, @Req() req: any) {
     return this.payItemService.savePayItemType(dto, req.user?.userId);
   }
 }

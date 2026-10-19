@@ -1,5 +1,6 @@
 import { Controller, Get, Post, Put, Body, Query, Req } from '@nestjs/common';
 import { ParameterService } from './parameters.service';
+import { SaveParameterDto } from './dto/save-parameter.dto';
 
 @Controller('parameters')
 export class ParameterController {
@@ -11,12 +12,12 @@ export class ParameterController {
   }
 
   @Post()
-  async createParameter(@Body() dto: any, @Req() req: any) {
+  async createParameter(@Body() dto: SaveParameterDto, @Req() req: any) {
     return this.parameterService.saveParameter(dto, req.user?.userId);
   }
 
   @Put()
-  async updateParameter(@Body() dto: any, @Req() req: any) {
+  async updateParameter(@Body() dto: SaveParameterDto, @Req() req: any) {
     return this.parameterService.saveParameter(dto, req.user?.userId);
   }
 }
